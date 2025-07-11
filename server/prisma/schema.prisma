@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -89,7 +89,7 @@ model Event {
   status          Status_event  @default(published)
   category        Category
   discount_amount Int?
-  ticket_price    Float         @db.Double
+  ticket_price    Float
   ticket_amount   Int
   assigned_pic    String?
   pic_phone_no    String?       @db.VarChar(25)
@@ -131,7 +131,7 @@ model Transaction {
   invoice_code    String
   ticket_bought   Int
   points_used     Int?
-  total_price     Float              @db.Double
+  total_price     Float
   ticket_discount Int?
   transfer_proof  String?
   status          Status_transaction @default(unpaid)
@@ -150,7 +150,7 @@ model Transaction {
 
 model Voucher {
   id          String       @id @default(cuid())
-  amount      Float        @db.Double
+  amount      Float
   is_valid    Boolean      @default(true)
   user_id     String       @unique
   user        User         @relation(fields: [user_id], references: [id])
