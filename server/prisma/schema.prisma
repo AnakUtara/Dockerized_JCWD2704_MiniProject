@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  male
+  female
+}
+
+enum Role {
+  customer
+  promotor
+}
+
+model User {
+  id                 String        @id @default(cuid())
+  username           String        @unique @db.VarChar(55)
+  fullname           String        @db.VarChar(85)
+  email              String        @unique @db.VarChar(85)
+  password           String
+  role               Role          @default(customer)
+  phone_no           String        @db.VarChar(25)
+  id_card            String        @unique @db.VarChar(16)
+  gender             Gender?
+  address            String?       @db.VarChar(255)
+  date_of_birth      DateTime?
+  avatar             String?
+  referral_code      String        @unique
+  reference_code     String?
+  points             Int           @default(0)
+  points_expiry_date DateTime?
+  bank_acc_no        String?       @db.VarChar(75)
+  event              Event[]
+  review             Review[]
+  transaction        Transaction[]
+  voucher            Voucher?
+  reset_token        String?       @db.Text
+  is_verified        Boolean       @default(false)
+  created_at         DateTime      @default(now())
+  updated_at         DateTime      @updatedAt
+
+  @@index([username, fullname, email, role])
+  @@map("users")
+}
+
+enum Venue_type {
+  indoor
+  outdoor
+}
+
+enum Status_event {
+  published
+  finished
+}
+
+enum Category {
+  Acoustic
+  Rock
+  Punk
+  Metal
+  Pop
+  Electronic
+  Experimental
+}
+
+model Event {
+  id              String        @id @default(cuid())
+  title           String        @db.VarChar(100)
+  location        String
+  city            String        @db.VarChar(55)
+  zip_code        Int
+  venue_type      Venue_type
+  details         String        @db.Text
+  roster          String
+  scheduled_at    DateTime
+  start_time      DateTime
+  end_time        DateTime
+  status          Status_event  @default(published)
+  category        Category
+  discount_amount Int?
+  ticket_price    Float         @db.Double
+  ticket_amount   Int
+  assigned_pic    String?
+  pic_phone_no    String?       @db.VarChar(25)
+  user_id         String
+  user            User          @relation(fields: [user_id], references: [id])
+  image_url       String
+  review          Review[]
+  transaction     Transaction[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([title, location, scheduled_at, status, venue_type, city])
+  @@map("events")
+}
+
+model Review {
+  review     String   @db.Text
+  rating     Int
+  user_id    String
+  event_id   String
+  user       User     @relation(fields: [user_id], references: [id])
+  event      Event    @relation(fields: [event_id], references: [id])
+  created_at DateTime @default(now())
+
+  @@id([user_id, event_id])
+  @@map("reviews")
+}
+
+enum Status_transaction {
+  unpaid
+  pending
+  success
+  cancelled
+}
+
+model Transaction {
+  id              String             @id @default(cuid())
+  invoice_code    String
+  ticket_bought   Int
+  points_used     Int?
+  total_price     Float              @db.Double
+  ticket_discount Int?
+  transfer_proof  String?
+  status          Status_transaction @default(unpaid)
+  user_id         String
+  event_id        String
+  voucher_id      String?            @unique
+  user            User               @relation(fields: [user_id], references: [id])
+  event           Event              @relation(fields: [event_id], references: [id])
+  voucher         Voucher?           @relation(fields: [voucher_id], references: [id])
+  created_at      DateTime           @default(now())
+  paid_at         DateTime           @updatedAt
+
+  @@index([invoice_code, status, user_id, event_id])
+  @@map("transactions")
+}
+
+model Voucher {
+  id          String       @id @default(cuid())
+  amount      Float        @db.Double
+  is_valid    Boolean      @default(true)
+  user_id     String       @unique
+  user        User         @relation(fields: [user_id], references: [id])
+  transaction Transaction?
+  used_at     DateTime?
+
+  @@map("vouchers")
+}

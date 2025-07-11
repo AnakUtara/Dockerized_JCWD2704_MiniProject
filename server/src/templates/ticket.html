@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Enjoy your ticket!</title>
+	</head>
+	<style>
+		html {
+			font-family: Arial, Helvetica, sans-serif;
+			letter-spacing: -0.2pt;
+		}
+		table {
+			border-collapse: collapse;
+		}
+		.tbl {
+			text-align: left;
+			border: 1px solid;
+			padding: 5px;
+		}
+	</style>
+	<body>
+		<h2>Thank for your purchase, {{username}}!</h2>
+		<p>You can keep & show this email to the event's staff on the spot.</p>
+		<p>Or show the ticket from your purchases tab on the website.</p>
+		<h4>Ticket Summary:</h4>
+		<table>
+			<thead>
+				<tr>
+					<th class="tbl">Event</th>
+					<th class="tbl">Tickets</th>
+					<th class="tbl">Location</th>
+					<th class="tbl">Date</th>
+					<th class="tbl">Time</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="tbl">{{title}}</td>
+					<td class="tbl">{{tickets}}x</td>
+					<td class="tbl">{{location}}</td>
+					<td class="tbl">{{date}}</td>
+					<td class="tbl">{{time}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>We recommend you arrived at venue 1 to 2 hours before start time.</p>
+		<p>Have fun & enjoy the show!</p>
+	</body>
+</html>
