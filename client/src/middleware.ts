@@ -22,8 +22,8 @@ export async function middleware(request: NextRequest) {
             name: "access_token",
             value: data.accessToken,
             path: "/",
-            domain: "riady.pw",
-            secure: true,
+            // domain: "riady.pw",
+            // secure: true,
           });
         return data;
       })

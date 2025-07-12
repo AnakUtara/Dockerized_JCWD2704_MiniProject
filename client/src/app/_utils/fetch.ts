@@ -5,15 +5,20 @@ export async function fetchSearchData(
   searchParams: any,
   token: string,
 ) {
-  const res = await axiosInstance().get(url, {
-    params: {
-      ...searchParams,
-    },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return res.data;
+  try {
+    const res = await axiosInstance().get(url, {
+      params: {
+        ...searchParams,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching search data:", error);
+    throw error;
+  }
 }
 
 export async function patchMultipartFormData(

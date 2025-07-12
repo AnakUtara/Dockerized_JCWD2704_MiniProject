@@ -3,7 +3,7 @@
 import { Datepicker, Flowbite, Tabs } from "flowbite-react";
 import { HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import IconTextInput from "@/app/_components/icon.text.input";
 import { FaAddressBook, FaPhone, FaUser } from "react-icons/fa";
 import { useAppSelector } from "@/app/_libs/redux/hooks";
@@ -24,6 +24,8 @@ import { AxiosError } from "axios";
 
 type Props = { children: React.ReactNode };
 export default function ProfileTabs({ children }: Props) {
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
   const activeUser = useAppSelector((s) => s.auth);
   const formik = useFormik({
     initialValues: {
@@ -71,9 +73,31 @@ export default function ProfileTabs({ children }: Props) {
       avatarRef.current.click();
     }
   }
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files && e.target.files[0];
+    formik.setFieldValue("avatar", file, true);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setAvatarPreview(url);
+    } else {
+      setAvatarPreview(null);
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    };
+  }, [avatarPreview]);
+
   return (
     <div>
-      <ProfileHeader activeUser={activeUser} onClick={handleOpenFileInput} />
+      <ProfileHeader
+        activeUser={activeUser}
+        onClick={handleOpenFileInput}
+        avatarPreview={avatarPreview}
+      />
       <Flowbite theme={{ theme: tabsCustomTheme }}>
         <Tabs aria-label="Tabs with underline" style="underline">
           <Tabs.Item active title="Profile" icon={HiUserCircle}>
@@ -87,13 +111,7 @@ export default function ProfileTabs({ children }: Props) {
                 name="avatar"
                 hidden
                 accept="image/*"
-                onChange={(e) =>
-                  formik.setFieldValue(
-                    "avatar",
-                    e.target.files && e.target.files[0],
-                    true,
-                  )
-                }
+                onChange={handleAvatarChange}
               />
               <label htmlFor="gender">
                 Gender:
