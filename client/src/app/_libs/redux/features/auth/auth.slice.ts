@@ -14,13 +14,13 @@ export const authSlice = createSlice({
     logout: (state) => {
       deleteCookie("access_token", {
         path: "/",
-        domain: "riady.pw",
-        secure: true,
+        // domain: "riady.pw",
+        // secure: true,
       });
       deleteCookie("refresh_token", {
-        path: "/", 
-        domain: "riady.pw",
-        secure: true,
+        path: "/",
+        // domain: "riady.pw",
+        // secure: true,
       });
       state = initUser;
       return state;

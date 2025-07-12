@@ -220,7 +220,6 @@ class UsersService {
 		delete req.user?.password;
 		delete req.user?.id_card;
 		delete req.user?.reset_token;
-		console.log(req?.user);
 
 		const accessToken = createToken(req?.user, ACC_SECRET_KEY, "1h");
 		const refreshToken = createToken(

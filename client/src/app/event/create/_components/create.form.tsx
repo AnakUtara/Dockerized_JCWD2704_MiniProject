@@ -186,7 +186,7 @@ export default function CreateForm() {
             </div>
           </div>
 
-          <div className="flex w-full flex-col justify-center gap-2 bg-slate-200  md:flex-row md:items-center md:pb-4">
+          <div className="flex w-full flex-col justify-center gap-2 bg-slate-200 p-4  md:flex-row md:items-center md:pb-4">
             <label htmlFor="scheduled_at" className="flex-[2] font-semibold">
               Event schedule :
               <Datepicker
@@ -234,7 +234,7 @@ export default function CreateForm() {
               />
             </label>
           </div>
-          <div className="mt-10 flex flex-col   bg-slate-200 md:flex-row md:gap-10">
+          <div className="mt-10 flex flex-col bg-slate-200 p-4 md:flex-row md:gap-10">
             <div className="w-full flex-1 font-semibold">
               Event ticket price (IDR) :
               <IconTextInput
@@ -328,7 +328,7 @@ export default function CreateForm() {
               </select>
             </label>
           </div>
-          <div className="mt-10 flex flex-col   bg-slate-200 md:flex-row md:gap-10">
+          <div className="mt-10 flex flex-col bg-slate-200 p-4 md:flex-row md:gap-10">
             <label htmlFor="assigned_pic" className="w-full flex-1 ">
               <p className="font-semibold">Event PIC :</p>
               <IconTextInput
@@ -366,7 +366,9 @@ export default function CreateForm() {
             >
               {formik.isSubmitting ? <Spinner></Spinner> : "Create Event"}
             </button>
-            <Link href={`/dashboard`}>
+            <Link
+              href={`/dashboard?sort=desc&sort_by=created_at&page=1&type=month&month=6&year=2024`}
+            >
               <button
                 type="button"
                 className="btn btn-accent mt-6 rounded-none text-white hover:bg-zinc-800"

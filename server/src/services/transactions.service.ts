@@ -11,15 +11,48 @@ class TransactionService {
 	async getChartData(req: Request) {
 		const { month, year, type } = req.chart_query;
 		const { username } = req.user;
+		let result: any[] = [];
 		if (type === "month") {
-			return await prisma.$queryRaw`select e.category, sum(ticket_bought) ticket_sales from transactions as t join events as e on e.id = t.event_id join users as u on u.id = e.user_id where u.username = ${username} and t.status = ${Status_transaction.success} and month(t.created_at) = ${month} and year(t.created_at) = ${year} group by e.category`;
+			result = await prisma.$queryRaw`
+			SELECT e.category, SUM(ticket_bought) AS ticket_sales
+			FROM transactions AS t
+			JOIN events AS e ON e.id = t.event_id
+			JOIN users AS u ON u.id = e.user_id
+			WHERE u.username = ${username}
+				AND t.status = ${Status_transaction.success}::"Status_transaction"
+				AND EXTRACT(MONTH FROM t.created_at) = ${month}
+				AND EXTRACT(YEAR FROM t.created_at) = ${year}
+			GROUP BY e.category`;
 		} else if (type === "day") {
-			return await prisma.$queryRaw`select e.category, sum(ticket_bought) ticket_sales from transactions as t join events as e on e.id = t.event_id join users as u on u.id = e.user_id where u.username = ${username} and t.status = ${Status_transaction.success} and date(t.created_at) = date(now()) group by e.category`;
+			result = await prisma.$queryRaw`
+			SELECT e.category, SUM(ticket_bought) AS ticket_sales
+			FROM transactions AS t
+			JOIN events AS e ON e.id = t.event_id
+			JOIN users AS u ON u.id = e.user_id
+			WHERE u.username = ${username}
+				AND t.status = ${Status_transaction.success}::"Status_transaction"
+				AND DATE(t.created_at) = CURRENT_DATE
+			GROUP BY e.category`;
 		} else if (type === "year") {
-			return await prisma.$queryRaw`select e.category, sum(ticket_bought) ticket_sales from transactions as t join events as e on e.id = t.event_id join users as u on u.id = e.user_id where u.username = ${username} and t.status = ${Status_transaction.success} and year(t.created_at) = ${year} group by e.category`;
+			result = await prisma.$queryRaw`
+			SELECT e.category, SUM(ticket_bought) AS ticket_sales
+			FROM transactions AS t
+			JOIN events AS e ON e.id = t.event_id
+			JOIN users AS u ON u.id = e.user_id
+			WHERE u.username = ${username}
+				AND t.status = ${Status_transaction.success}::"Status_transaction"
+				AND EXTRACT(YEAR FROM t.created_at) = ${year}
+			GROUP BY e.category`;
+		} else {
+			throw new Error("invalid type");
 		}
 
-		throw new Error("invalid type");
+		const safeResult = result.map((row: any) => ({
+			...row,
+			ticket_sales: row.ticket_sales?.toString(),
+		}));
+
+		return safeResult;
 	}
 	async getCustomerTransactions(req: Request) {
 		const { sort_by, sort, search, status, page } = req.query as {
@@ -89,7 +122,13 @@ class TransactionService {
 	}
 
 	async getPromotorTransactions(req: Request) {
-		const { sort_by, sort, search, status, page } = req.query as unknown as {
+		const {
+			sort_by = "created_at",
+			sort = "desc",
+			search = "",
+			status,
+			page = "1",
+		} = req.query as unknown as {
 			sort_by: string;
 			sort: string;
 			search: string;

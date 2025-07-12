@@ -7,8 +7,16 @@ import { capitalize, formatCompactNumber } from "@/app/_utils/formatter";
 import clsx from "clsx";
 import { FaCamera } from "react-icons/fa";
 
-type Props = { activeUser: TUser; onClick: () => void };
-export default function ProfileHeader({ activeUser, onClick }: Props) {
+type Props = {
+  activeUser: TUser;
+  onClick: () => void;
+  avatarPreview?: string | null;
+};
+export default function ProfileHeader({
+  activeUser,
+  onClick,
+  avatarPreview,
+}: Props) {
   return (
     <>
       <div
@@ -18,7 +26,12 @@ export default function ProfileHeader({ activeUser, onClick }: Props) {
         )}
       >
         <div className="flex w-fit flex-col items-center gap-y-2 self-start">
-          <UserAvatar user={activeUser} size={"lg"} bordered={true} />
+          <UserAvatar
+            user={activeUser}
+            size={"lg"}
+            bordered={true}
+            avatarPreview={avatarPreview}
+          />
           <button
             type="button"
             className="btn btn-square btn-accent btn-xs absolute top-36 text-white hover:bg-gray-800"

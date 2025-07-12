@@ -60,6 +60,7 @@ export const updateSchema = Joi.object({
 		.max(12)
 		.allow(""),
 	address: Joi.string().trim().max(200).allow(""),
+	avatar: Joi.string().trim().allow("").optional(),
 });
 
 export const transactionSchema = Joi.object({
